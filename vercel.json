@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "functions": {
+    "odoo.js": {
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/odoo",
+      "destination": "/odoo.js"
+    },
+    {
+      "source": "/",
+      "destination": "/index.html"
+    }
+  ]
+}
