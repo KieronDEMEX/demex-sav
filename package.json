@@ -13,3 +13,25 @@
   "node": "20.x"
 }
 }
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "odoo.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "10mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/odoo",
+      "dest": "/odoo.js"
+    },
+    {
+      "src": "/",
+      "dest": "/index.html"
+    }
+  ]
+}
