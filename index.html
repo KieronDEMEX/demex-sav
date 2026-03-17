@@ -7,13 +7,12 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -21,26 +20,17 @@
         :root {
             --primary: #0052CC;
             --primary-dark: #003D99;
-            --primary-light: #E6F0FF;
             --accent: #FF6B35;
             --success: #00C853;
             --warning: #FFB300;
-            --error: #D32F2F;
             --bg: #FAFBFC;
             --surface: #FFFFFF;
             --border: #E0E4E8;
             --text: #0A1929;
             --text-secondary: #5E6C84;
-            --text-muted: #8993A4;
-            
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
             --shadow: 0 2px 8px rgba(0,0,0,0.08);
-            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-            
             --radius: 12px;
-            --radius-sm: 8px;
             --font-display: 'Outfit', system-ui, sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
         }
 
         body {
@@ -48,54 +38,21 @@
             background: var(--bg);
             color: var(--text);
             line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-in { animation: fadeIn 0.4s ease-out; }
         .container { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
-        .card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-sm); transition: all 0.2s; }
-        .card:hover { box-shadow: var(--shadow); }
-        
-        .btn {
-            display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
-            border-radius: var(--radius-sm); font-weight: 600; font-size: 14px;
-            cursor: pointer; border: none; transition: all 0.2s; font-family: var(--font-display);
-        }
+        .card { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); padding: 24px; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; border: none; font-family: var(--font-display); }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
-        .btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
-        
-        .badge {
-            display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px;
-            border-radius: 100px; font-size: 12px; font-weight: 600;
-        }
+        .badge { display: inline-flex; padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; }
         .badge-success { background: #E8F5E9; color: #2E7D32; }
         .badge-warning { background: #FFF8E1; color: #F57C00; }
-        .badge-info { background: var(--primary-light); color: var(--primary); }
-        
-        .input {
-            width: 100%; padding: 10px 14px; border: 1px solid var(--border);
-            border-radius: var(--radius-sm); font-family: var(--font-display); font-size: 14px;
-        }
-        .input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-        
-        .label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
-        .grid { display: grid; gap: 20px; }
-        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-        
-        .loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--text-muted); }
+        .badge-info { background: #E6F0FF; color: #0052CC; }
+        .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .loading { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--text-secondary); }
         .spinner { width: 24px; height: 24px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        
-        @media (max-width: 768px) {
-            .container { padding: 0 16px; }
-            .grid-2 { grid-template-columns: 1fr; }
-        }
+        .error-box { background: #FFEBEE; border: 1px solid #EF5350; color: #C62828; padding: 16px; border-radius: 8px; margin: 20px 0; }
     </style>
 </head>
 <body>
@@ -104,15 +61,10 @@
     <script type="text/babel">
         const { useState, useEffect, createContext, useContext } = React;
 
-        // ============================================
-        // API CLIENT - Vercel Serverless
-        // ============================================
+        // API CLIENT
         class DemexAPI {
             constructor() {
-                // Détection automatique de l'URL API
-                this.baseURL = window.location.hostname === 'localhost' 
-                    ? 'http://localhost:3000'  // Développement local
-                    : '';  // En production Vercel, même domaine
+                this.baseURL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
             }
 
             async call(action, data = {}) {
@@ -122,6 +74,10 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
 
                     const result = await response.json();
                     
@@ -138,22 +94,17 @@
 
             healthCheck() { return this.call('health'); }
             getTickets(filters = [], limit = 50) { return this.call('getTickets', { filters, limit }); }
-            createTicket(data) { return this.call('createTicket', { data }); }
-            updateTicket(id, data) { return this.call('updateTicket', { id, data }); }
-            getClients(search = '') { return this.call('getClients', { search }); }
             getStats() { return this.call('getStats'); }
-            uploadFile(filename, data, ticket_id) { return this.call('uploadFile', { filename, data, ticket_id }); }
         }
 
-        // ============================================
         // CONTEXT
-        // ============================================
         const AppContext = createContext();
 
         const AppProvider = ({ children }) => {
             const [api] = useState(() => new DemexAPI());
             const [loading, setLoading] = useState(true);
-            const [user, setUser] = useState({ name: 'Utilisateur Demex', role: 'admin' });
+            const [error, setError] = useState(null);
+            const [user] = useState({ name: 'Utilisateur Demex', role: 'admin' });
 
             useEffect(() => {
                 api.healthCheck()
@@ -162,85 +113,80 @@
                         setLoading(false);
                     })
                     .catch(err => {
-                        console.error('❌ Erreur connexion API:', err);
+                        console.error('❌ Erreur API:', err);
+                        setError(err.message);
                         setLoading(false);
                     });
             }, []);
 
             return (
-                <AppContext.Provider value={{ api, loading, user }}>
+                <AppContext.Provider value={{ api, loading, error, user }}>
                     {children}
                 </AppContext.Provider>
             );
         };
 
-        // ============================================
-        // COMPONENTS
-        // ============================================
-
+        // HEADER
         const Header = () => {
             const { user } = useContext(AppContext);
 
             return (
                 <header style={{
                     background: 'linear-gradient(135deg, #0052CC 0%, #003D99 100%)',
-                    color: 'white', padding: '20px 0', boxShadow: 'var(--shadow-lg)',
-                    position: 'sticky', top: 0, zIndex: 100
+                    color: 'white', padding: '20px 0', boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                 }}>
                     <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                             <div style={{
                                 width: '48px', height: '48px', background: 'white', borderRadius: '12px',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontWeight: 800, fontSize: '20px', color: 'var(--primary)'
+                                fontWeight: 800, fontSize: '20px', color: '#0052CC'
                             }}>DX</div>
                             <div>
-                                <h1 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '2px' }}>Demex SAV Pro</h1>
-                                <p style={{ fontSize: '13px', opacity: 0.9 }}>Gestion des interventions Odoo</p>
+                                <h1 style={{ fontSize: '24px', fontWeight: 800 }}>Demex SAV Pro</h1>
+                                <p style={{ fontSize: '13px', opacity: 0.9 }}>Gestion des interventions</p>
                             </div>
                         </div>
-                        {user && (
-                            <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontWeight: 600, fontSize: '14px' }}>{user.name}</div>
-                                <div style={{ fontSize: '12px', opacity: 0.8 }}>{user.role}</div>
-                            </div>
-                        )}
+                        <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontWeight: 600, fontSize: '14px' }}>{user.name}</div>
+                            <div style={{ fontSize: '12px', opacity: 0.8 }}>{user.role}</div>
+                        </div>
                     </div>
                 </header>
             );
         };
 
-        const StatCard = ({ icon, title, value, color, trend }) => {
+        // STAT CARD
+        const StatCard = ({ icon, title, value, color }) => {
             const IconComponent = lucide[icon];
             
             return (
-                <div className="card" style={{ padding: '24px' }}>
+                <div className="card">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
-                            <div style={{ 
-                                fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)',
-                                textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px'
-                            }}>{title}</div>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '8px' }}>
+                                {title}
+                            </div>
                             <div style={{ fontSize: '32px', fontWeight: 800 }}>{value}</div>
-                            {trend && <div style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '4px' }}>{trend}</div>}
                         </div>
                         <div style={{
                             width: '48px', height: '48px', background: `${color}20`,
-                            borderRadius: 'var(--radius-sm)', display: 'flex',
-                            alignItems: 'center', justifyContent: 'center', color: color
+                            borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: color
                         }}>
-                            <IconComponent size={24} />
+                            {IconComponent && <IconComponent size={24} />}
                         </div>
                     </div>
                 </div>
             );
         };
 
+        // DASHBOARD
         const Dashboard = () => {
-            const { api } = useContext(AppContext);
+            const { api, error } = useContext(AppContext);
             const [stats, setStats] = useState({ total: 0, nouveau: 0, en_cours: 0, resolu: 0 });
             const [tickets, setTickets] = useState([]);
             const [loading, setLoading] = useState(true);
+            const [loadError, setLoadError] = useState(null);
 
             useEffect(() => {
                 loadData();
@@ -249,70 +195,96 @@
             const loadData = async () => {
                 try {
                     const [statsData, ticketsData] = await Promise.all([
-                        api.getStats(),
-                        api.getTickets([], 5)
+                        api.getStats().catch(() => ({ total: 0, nouveau: 0, en_cours: 0, resolu: 0 })),
+                        api.getTickets([], 5).catch(() => [])
                     ]);
                     setStats(statsData);
                     setTickets(ticketsData);
-                } catch (error) {
-                    console.error('Erreur chargement:', error);
+                } catch (err) {
+                    setLoadError(err.message);
                 } finally {
                     setLoading(false);
                 }
             };
 
+            if (error) {
+                return (
+                    <div className="container" style={{ padding: '40px 24px' }}>
+                        <div className="error-box">
+                            <strong>❌ Erreur de connexion</strong><br/>
+                            {error}<br/><br/>
+                            Vérifiez que les variables d'environnement ODOO sont bien configurées dans Vercel.
+                        </div>
+                    </div>
+                );
+            }
+
             if (loading) {
                 return (
-                    <div className="loading">
+                    <div className="loading" style={{ minHeight: '50vh' }}>
                         <div className="spinner"></div>
-                        <span style={{ marginLeft: '12px' }}>Chargement des données Odoo...</span>
+                        <span style={{ marginLeft: '12px' }}>Chargement...</span>
                     </div>
                 );
             }
 
             return (
-                <div className="fade-in">
+                <div>
                     <div style={{ marginBottom: '32px' }}>
                         <h2 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '8px' }}>Tableau de bord</h2>
                         <p style={{ color: 'var(--text-secondary)' }}>Vue d'ensemble de vos interventions SAV</p>
                     </div>
 
-                    <div className="grid grid-2" style={{ marginBottom: '32px' }}>
-                        <StatCard icon="Wrench" title="Total Interventions" value={stats.total} color="var(--primary)" trend="Ce mois" />
-                        <StatCard icon="AlertCircle" title="Nouvelles" value={stats.nouveau} color="var(--accent)" />
-                        <StatCard icon="Clock" title="En cours" value={stats.en_cours} color="var(--warning)" />
-                        <StatCard icon="CheckCircle" title="Résolues" value={stats.resolu} color="var(--success)" />
+                    {loadError && (
+                        <div className="error-box" style={{ marginBottom: '20px' }}>
+                            Impossible de charger les données Odoo : {loadError}
+                        </div>
+                    )}
+
+                    <div className="grid" style={{ marginBottom: '32px' }}>
+                        <StatCard icon="Wrench" title="Total Interventions" value={stats.total} color="#0052CC" />
+                        <StatCard icon="AlertCircle" title="Nouvelles" value={stats.nouveau} color="#FF6B35" />
+                        <StatCard icon="Clock" title="En cours" value={stats.en_cours} color="#FFB300" />
+                        <StatCard icon="CheckCircle" title="Résolues" value={stats.resolu} color="#00C853" />
                     </div>
 
-                    <div className="card" style={{ padding: '24px' }}>
-                        <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Interventions récentes</h3>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                            {tickets.map(ticket => (
-                                <div key={ticket.id} style={{
-                                    padding: '16px', border: '1px solid var(--border)',
-                                    borderRadius: 'var(--radius-sm)', display: 'flex',
-                                    justifyContent: 'space-between', alignItems: 'center'
-                                }}>
-                                    <div>
-                                        <div style={{ fontWeight: 600, marginBottom: '4px' }}>{ticket.name}</div>
-                                        <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                                            {ticket.partner_id?.[1] || 'Client'} • {new Date(ticket.create_date).toLocaleDateString('fr-FR')}
+                    <div className="card">
+                        <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>
+                            Interventions récentes
+                        </h3>
+                        {tickets.length === 0 ? (
+                            <p style={{ color: 'var(--text-secondary)', textAlign: 'center', padding: '20px' }}>
+                                Aucune intervention pour le moment
+                            </p>
+                        ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                {tickets.map(ticket => (
+                                    <div key={ticket.id} style={{
+                                        padding: '16px', border: '1px solid var(--border)', borderRadius: '8px',
+                                        display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                                    }}>
+                                        <div>
+                                            <div style={{ fontWeight: 600, marginBottom: '4px' }}>{ticket.name}</div>
+                                            <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                                                {ticket.partner_id?.[1] || 'Client'} • {new Date(ticket.create_date).toLocaleDateString('fr-FR')}
+                                            </div>
                                         </div>
+                                        <span className={`badge badge-${
+                                            ticket.stage_id?.[1]?.toLowerCase().includes('nouveau') ? 'info' :
+                                            ticket.stage_id?.[1]?.toLowerCase().includes('cours') ? 'warning' : 'success'
+                                        }`}>
+                                            {ticket.stage_id?.[1] || 'N/A'}
+                                        </span>
                                     </div>
-                                    <span className={`badge badge-${
-                                        ticket.stage_id?.[1]?.toLowerCase().includes('nouveau') ? 'info' :
-                                        ticket.stage_id?.[1]?.toLowerCase().includes('cours') ? 'warning' : 'success'
-                                    }`}>
-                                        {ticket.stage_id?.[1] || 'N/A'}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             );
         };
 
+        // APP
         const App = () => {
             const { loading } = useContext(AppContext);
 
@@ -320,7 +292,7 @@
                 return (
                     <div className="loading" style={{ minHeight: '100vh' }}>
                         <div className="spinner"></div>
-                        <span style={{ marginLeft: '12px' }}>Connexion à Odoo...</span>
+                        <span style={{ marginLeft: '12px' }}>Connexion...</span>
                     </div>
                 );
             }
@@ -347,7 +319,10 @@
             );
         };
 
-        lucide.createIcons();
+        // INIT
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
         
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<AppProvider><App /></AppProvider>);
